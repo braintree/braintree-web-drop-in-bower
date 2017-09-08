@@ -1,0 +1,21 @@
+{
+  "name": "braintree-web-drop-in",
+  "authors": [
+    "braintree <code@getbraintree.com>"
+  ],
+  "description": "Braintree Drop-in for the web",
+  "main": "dropin.js",
+  "keywords": [
+    "braintree",
+    "payments"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/braintree/braintree-web-drop-in",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
