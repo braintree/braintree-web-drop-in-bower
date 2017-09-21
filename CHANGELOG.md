@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+1.8.0
+----------
+- Simplify check for checkout.js on the merchant's page
+- Allow useraction to be set for PayPal button.
+- Allow vaulted payment methods to not be pre-selected on initialization
+- Update PayPal Checkout to v4.0.130
+
 1.7.0
 ------
 - Add data collector
@@ -27,7 +34,7 @@ CHANGELOG
 - Add `clearSelectedPaymentMethod` to remove selected payment method
 
 1.4.0
-------
+-----
 - Add `paymentOptionSelected` event
 - Add support for PayPal and PayPal credit in the script tag integration
 - Add support for locale and payment option priority in the script tag integration
