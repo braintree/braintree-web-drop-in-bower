@@ -1,26 +1,37 @@
 CHANGELOG
 =========
 
+1.8.1
+-----
+- Update braintree-web to v3.25.0
+- Update paypal-checkout to v4.0.148
+- Fix errors that were not translated when using a locale
+- Update browser-detection to v1.7.0
+- Fix issue where the edges of card form inputs were not clickable
+  - This adds a label element to the Drop-in card form. If you have global styles for the label tag, it may affect the look of the Drop-in card form.
+- Fix issue where style overrides could not be applied if previous style rule did not exist
+- Improve accessibility for screenreaders when encountering field errors in card view
+
 1.8.0
-----------
+-----
 - Simplify check for checkout.js on the merchant's page
 - Allow useraction to be set for PayPal button.
 - Allow vaulted payment methods to not be pre-selected on initialization
 - Update PayPal Checkout to v4.0.130
 
 1.7.0
-------
+-----
 - Add data collector
 - Update PayPal Checkout to v4.0.110
 - Update braintree-web to v3.22.2
 
 1.6.1
-------
+-----
 - Fix svgs not showing up when d3.js is used on page
 - Use version 3.22.0 of braintree-web
 
 1.6.0
-------
+-----
 - Hide Diners Club logo when Diners Club may not be supported
 - Add `cardholderName` option to card configuration
 - Use version 3.21.1 of braintree-web
@@ -32,6 +43,7 @@ CHANGELOG
 - Add `aria-label` attribute to payment options
 - Update checkout.js to v4.0.95
 - Add `clearSelectedPaymentMethod` to remove selected payment method
+- Add `paymentMethodIsSelected` property on `paymentMethodRequestable` events
 
 1.4.0
 -----
@@ -45,7 +57,6 @@ CHANGELOG
 - Fix bug where Drop-in would not finish loading if inside a hidden div
 - Improve transition from payment sheet views to payment methods view
 - Use version 3.19.1 of braintree-web
-- Add `paymentMethodIsSelected` property on `paymentMethodRequestable` events
 - Improve UI in older versions of iOS Safari
 
 1.3.1
