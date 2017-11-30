@@ -1,11 +1,17 @@
 CHANGELOG
 =========
 
+1.9.2
+-----
+- Improve logic for enabling Apple Pay to only trigger with HTTPS (#328 thanks @maxsz)
+- Fix error for saved ApplePay payment method being displayed with incorrect details (#330 thanks @julka)
+- Displays "Apple Pay" instead of "undefined" for saved Apple Pay payment methods (#332 thanks @julka)
+
 1.9.1
 -----
 - Normalize label styles
  - Fixes styling applied by frameworks like Bootstrap
- Fix logic for Apple Pay being enabled (#324)
+- Fix logic for Apple Pay being enabled (#324)
 - Update checkout.js to v4.0.166
 
 1.9.0
