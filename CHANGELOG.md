@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+1.9.3
+-----
+- Update checkout.js to evergreen link
+- Update braintree-web to v3.28.0
+- Update promise-polyfill to v7.0.0
+- Fix documentation for `preselectVaultedPaymentMethod`
+- Fix issue where 3DS modal would not close when no bank frame is added (#335)
+- Fix issue where liability shift information was only passed back if `liabilityShiftPossible` was true
+- Fix issue where vaulted Apple Pay methods were being displayed when they could not be used for transactions
+- Fix issue where script tag integration could not be instantiated when script tag was not a direct child of the form (#344)
+
 1.9.2
 -----
 - Improve logic for enabling Apple Pay to only trigger with HTTPS (#328 thanks @maxsz)
