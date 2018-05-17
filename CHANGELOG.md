@@ -1,8 +1,21 @@
 CHANGELOG
 =========
 
+1.11.0
+------
+- Use generic error with console log when a payment method fails to set up
+- Fix issue where Mastercard was displayed as MasterCard
+- Allow card form to not be cleared after succesful tokenization with `card.clearFieldsAfterTokenization`
+- Fix atob polyfill
+- Update braintree-web to v3.34.0
+- Fix issue where Drop-in would fail to load if something blocked an external script from loading (#379)
+- Report error for duplicate payment method error
+- Fix issue where Drop-in would throw an error if another Google script was included on the merchant page
+- Fix issue where Drop-in would throw an error if a non-checkout.js PayPal script was included in the merchant page
+- Update Google Pay script to enable it in Desktop Chrome, Firefox, Safari, and others (See [Google's documentation](https://developers.google.com/pay/api/web/guides/test-and-deploy/overview#browser-test))
+
 1.10.0
-----------
+------
 - Enable Venmo support
 - Enable Google Pay support
 - Fix issue where non utf-8 encoded sites would show strange characters for card placeholders
