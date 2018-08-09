@@ -1,6 +1,16 @@
 CHANGELOG
 =========
 
+1.12.0
+------
+- Update braintree-web to v3.36.0
+- Provide browserified version of Drop-in on npm at `dist/browser/dropin.js`
+- Fix issue where sass compliation would prevent styling of ApplePay button
+- Fix slight HTML error for the expiration date field
+- Fix issue where Drop-in could not load in IE9 and 10
+- Add feature where payment methods can be deleted from Drop-in
+- Fix issue where consumed payment methods could not be cleared in 3ds flow (closes #408)
+
 1.11.0
 ------
 - Use generic error with console log when a payment method fails to set up
