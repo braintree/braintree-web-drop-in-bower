@@ -1,13 +1,17 @@
 CHANGELOG
 =========
 
+1.14.1
+------
+- Explicitly opt out of additional PayPal credit button in normal PayPal view
+
 1.14.0
 ------
 - Change Google Pay button to black style to better match [Google's brand guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines)
 - Allow passing in [button options](https://developers.google.com/pay/api/web/reference/object#ButtonOptions) to Google Pay configuration
 - Fix issue where Drop-in would emit `noPaymentMethodRequestable` and `paymentMethodRequestable` right after tokenization
 - Fix issue where Mastercard was styled as MasterCard in vault manager view
-- Update braintree-web to v3.38.1
+- Update braintree-web to v3.39.0
 - Fix issue where PayPal email addresses may overflow the container
 - Use @braintree/asset-loader@v0.1.0 for asset loading
 - Use @braintree/class-list@v0.1.0 for manipulating classes
