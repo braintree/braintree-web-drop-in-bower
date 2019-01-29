@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+1.15.0
+------
+- Add `rawPaymentData` to Apple Pay payment method payload
+- Fix error with `toLowerCase` on error reporting
+- Update braintree-web to v3.42.0
+- Update @braintree/asset-loader to v0.2.1
+- Fix issue where 3ds modal may not get cleaned up during teardown (#463)
+- Allow easy Google Pay version 2 configuration
+
 1.14.1
 ------
 - Explicitly opt out of additional PayPal credit button in normal PayPal view
