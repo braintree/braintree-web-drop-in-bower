@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.18.0
+------
+- Add ability to opt out of client side vaulting (cards)
+- Update Google Pay mark to adhere with [brand guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines#logo-mark)
+
 1.17.2
 ------
 - Update braintree-web to v3.44.2
