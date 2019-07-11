@@ -23,14 +23,14 @@ This is a full example of a Drop-in integration that only accepts credit cards.
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Checkout</title>
   </head>
   <body>
     <div id="dropin-container"></div>
     <button id="submit-button">Purchase</button>
 
-    <script src="https://js.braintreegateway.com/web/dropin/1.18.0/js/dropin.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/dropin/1.19.0/js/dropin.min.js"></script>
 
     <script>
       var submitButton = document.querySelector('#submit-button');

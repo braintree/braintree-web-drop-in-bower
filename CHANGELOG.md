@@ -1,6 +1,23 @@
 CHANGELOG
 =========
 
+1.19.0
+------
+- Update asset-loader to v0.3.1
+- Update event-emitter to v0.2.0
+- Update promise-polyfill to v8.1.3
+- Update braintree-web to v3.47.0
+- Update wrap-promise to v2.0.0
+  - Errors thrown in developer provided callbacks will now log in the console
+- Replace css preprocessor, from [Sass](https://sass-lang.com) to [Less](http://lesscss.org)
+- Upgrade to gulp 4
+- Adjust delete confirmation box css to be consistent, all relative to own parent.
+- Improved build to properly interpolate current versions in not only docs but also built code
+- Prevent Drop-in from firing requestable events prematurely (#511)
+- Add `off` method for unsubscribing from events without tearing down
+- Clean up extraneous css rules
+- Add 3DS 2 support
+
 1.18.0
 ------
 - Add ability to opt out of client side vaulting (cards)
