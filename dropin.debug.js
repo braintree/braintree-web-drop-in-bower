@@ -699,7 +699,7 @@ ApplePay.prototype.createPaymentRequest = function (paymentRequest) {
  * @param {string} options.displayName The canonical name for your store. Use a non-localized name. This parameter should be a UTF-8 string that is a maximum of 128 characters. The system may display this name to the user.
  * @param {callback} [callback] The second argument, <code>data</code>, is the Apple Pay merchant session object. If no callback is provided, `performValidation` returns a promise.
  * Pass the merchant session to your Apple Pay session's `completeMerchantValidation` method.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * var applePay = require('braintree-web/apple-pay');
  *
@@ -793,7 +793,7 @@ ApplePay.prototype.performValidation = function (options) {
  * @param {object} options Options
  * @param {object} options.token The `payment.token` property of an {@link external:ApplePayPaymentAuthorizedEvent}.
  * @param {callback} [callback] The second argument, <code>data</code>, is a {@link ApplePay~tokenizePayload|tokenizePayload}. If no callback is provided, `tokenize` returns a promise that resolves with a {@link ApplePay~tokenizePayload|tokenizePayload}.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * var applePay = require('braintree-web/apple-pay');
  *
@@ -877,7 +877,7 @@ ApplePay.prototype.tokenize = function (options) {
  * applePayInstance.teardown(function () {
  *   // teardown is complete
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 ApplePay.prototype.teardown = function () {
   convertMethodsToError(this, methods(ApplePay.prototype));
@@ -962,7 +962,7 @@ var basicComponentVerification = require('../lib/basic-component-verification');
 var createDeferredClient = require('../lib/create-deferred-client');
 var createAssetsUrl = require('../lib/create-assets-url');
 var errors = require('./errors');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 var Promise = require('../lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
 
@@ -973,7 +973,7 @@ var wrapPromise = require('@braintree/wrap-promise');
  * @param {Client} [options.client] A {@link Client} instance.
  * @param {string} [options.authorization] A tokenizationKey or clientToken. Can be used in place of `options.client`.
  * @param {callback} [callback] The second argument, `data`, is the {@link ApplePay} instance. If no callback is provided, `create` returns a promise that resolves with the {@link ApplePay} instance.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 function create(options) {
   var name = 'Apple Pay';
@@ -1006,7 +1006,7 @@ function create(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.20.3`.
+   * @description The current version of the SDK, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION
@@ -1034,6 +1034,7 @@ var isVerifiedDomain = require('../lib/is-verified-domain');
 var BraintreeError = require('../lib/braintree-error');
 var convertToBraintreeError = require('../lib/convert-to-braintree-error');
 var getGatewayConfiguration = require('./get-configuration').getConfiguration;
+var createAuthorizationData = require('../lib/create-authorization-data');
 var addMetadata = require('../lib/add-metadata');
 var Promise = require('../lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
@@ -1119,7 +1120,7 @@ function Client(configuration) {
 }
 
 Client.initialize = function (options) {
-  var clientInstance;
+  var clientInstance, authData;
   var promise = cachedClients[options.authorization];
 
   if (promise) {
@@ -1128,10 +1129,18 @@ Client.initialize = function (options) {
     return promise;
   }
 
-  promise = getGatewayConfiguration(options).then(function (configuration) {
+  try {
+    authData = createAuthorizationData(options.authorization);
+  } catch (err) {
+    return Promise.reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
+  }
+
+  promise = getGatewayConfiguration(authData).then(function (configuration) {
     if (options.debug) {
       configuration.isDebug = true;
     }
+
+    configuration.authorization = options.authorization;
 
     clientInstance = new Client(configuration);
 
@@ -1282,7 +1291,7 @@ Client.prototype._findOrCreateFraudnetJSON = function (clientMetadataId) {
  *     console.log('Got nonce:', response.creditCards[0].nonce);
  *   });
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 Client.prototype.request = function (options, callback) {
   var self = this; // eslint-disable-line no-invalid-this
@@ -1460,7 +1469,7 @@ Client.prototype.getVersion = function () {
  * clientInstance.teardown(function () {
  *   // teardown is complete
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 Client.prototype.teardown = wrapPromise(function () {
   var self = this; // eslint-disable-line no-invalid-this
@@ -1482,7 +1491,7 @@ function getAuthorizationHeadersForGraphQL(configuration) {
 
 module.exports = Client;
 
-},{"../lib/add-metadata":71,"../lib/analytics":72,"../lib/assets":73,"../lib/assign":74,"../lib/braintree-error":77,"../lib/constants":81,"../lib/convert-methods-to-error":82,"../lib/convert-to-braintree-error":83,"../lib/deferred":87,"../lib/is-verified-domain":95,"../lib/methods":97,"../lib/once":98,"../lib/promise":100,"./constants":35,"./errors":36,"./get-configuration":37,"./request":49,"./request/graphql":47,"@braintree/wrap-promise":29}],35:[function(require,module,exports){
+},{"../lib/add-metadata":71,"../lib/analytics":72,"../lib/assets":73,"../lib/assign":74,"../lib/braintree-error":77,"../lib/constants":81,"../lib/convert-methods-to-error":82,"../lib/convert-to-braintree-error":83,"../lib/create-authorization-data":85,"../lib/deferred":87,"../lib/is-verified-domain":95,"../lib/methods":97,"../lib/once":98,"../lib/promise":100,"./constants":35,"./errors":36,"./get-configuration":37,"./request":49,"./request/graphql":47,"@braintree/wrap-promise":29}],35:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -1586,7 +1595,6 @@ var wrapPromise = require('@braintree/wrap-promise');
 var request = require('./request');
 var uuid = require('../lib/vendor/uuid');
 var constants = require('../lib/constants');
-var createAuthorizationData = require('../lib/create-authorization-data');
 var errors = require('./errors');
 var GraphQL = require('./request/graphql');
 var GRAPHQL_URLS = require('../lib/constants').GRAPHQL_URLS;
@@ -1594,9 +1602,9 @@ var isDateStringBeforeOrOn = require('../lib/is-date-string-before-or-on');
 
 var BRAINTREE_VERSION = require('./constants').BRAINTREE_VERSION;
 
-function getConfiguration(options) {
+function getConfiguration(authData) {
   return new Promise(function (resolve, reject) {
-    var configuration, authData, attrs, configUrl, reqOptions;
+    var configuration, attrs, configUrl, reqOptions;
     var sessionId = uuid();
     var analyticsMetadata = {
       merchantAppId: global.location.host,
@@ -1608,13 +1616,6 @@ function getConfiguration(options) {
       sessionId: sessionId
     };
 
-    try {
-      authData = createAuthorizationData(options.authorization);
-    } catch (err) {
-      reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
-
-      return;
-    }
     attrs = authData.attrs;
     configUrl = authData.configUrl;
 
@@ -1673,7 +1674,6 @@ function getConfiguration(options) {
       }
 
       configuration = {
-        authorization: options.authorization,
         authorizationType: attrs.tokenizationKey ? 'TOKENIZATION_KEY' : 'CLIENT_TOKEN',
         authorizationFingerprint: attrs.authorizationFingerprint,
         analyticsMetadata: analyticsMetadata,
@@ -1690,12 +1690,12 @@ module.exports = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../lib/braintree-error":77,"../lib/constants":81,"../lib/create-authorization-data":85,"../lib/is-date-string-before-or-on":93,"../lib/promise":100,"../lib/vendor/uuid":104,"./constants":35,"./errors":36,"./request":49,"./request/graphql":47,"@braintree/wrap-promise":29}],38:[function(require,module,exports){
+},{"../lib/braintree-error":77,"../lib/constants":81,"../lib/is-date-string-before-or-on":93,"../lib/promise":100,"../lib/vendor/uuid":104,"./constants":35,"./errors":36,"./request":49,"./request/graphql":47,"@braintree/wrap-promise":29}],38:[function(require,module,exports){
 'use strict';
 
 var BraintreeError = require('../lib/braintree-error');
 var Client = require('./client');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 var Promise = require('../lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
 var sharedErrors = require('../lib/errors');
@@ -1708,7 +1708,7 @@ var sharedErrors = require('../lib/errors');
  * @param {object} options Object containing all {@link Client} options:
  * @param {string} options.authorization A tokenizationKey or clientToken.
  * @param {callback} [callback] The second argument, <code>data</code>, is the {@link Client} instance.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * var createClient = require('braintree-web/client').create;
  *
@@ -1734,7 +1734,7 @@ function create(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.20.3`.
+   * @description The current version of the SDK, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION
@@ -3170,7 +3170,7 @@ GooglePayment.prototype.createPaymentDataRequest = function (overrides) {
  * }).catch(function (err) {
  *   // handle errors
  * });
- * @returns {Promise|void} Returns a promise that resolves the parsed response if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise that resolves the parsed response if no callback is provided.
  */
 GooglePayment.prototype.parseResponse = function (response) {
   var client = this._client;
@@ -3237,7 +3237,7 @@ GooglePayment.prototype.parseResponse = function (response) {
  * googlePaymentInstance.teardown(function () {
  *   // teardown is complete
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 GooglePayment.prototype.teardown = function () {
   convertMethodsToError(this, methods(GooglePayment.prototype));
@@ -3276,7 +3276,7 @@ var createDeferredClient = require('../lib/create-deferred-client');
 var createAssetsUrl = require('../lib/create-assets-url');
 var Promise = require('../lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 /**
  * @static
@@ -3387,7 +3387,7 @@ var VERSION = "3.54.0";
  *   // handle setup errors
  * });
  *
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 function create(options) {
   var name = 'Google Pay';
@@ -3422,7 +3422,7 @@ function create(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.20.3`.
+   * @description The current version of the SDK, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION
@@ -4393,7 +4393,7 @@ HostedFields.prototype._attachInvalidFieldContainersToError = function (err) {
  *     console.info('Hosted Fields has been torn down!');
  *   }
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 HostedFields.prototype.teardown = function () {
   var self = this;
@@ -4541,7 +4541,7 @@ HostedFields.prototype.teardown = function () {
  *     console.log('Got nonce:', payload.nonce);
  *   }
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 HostedFields.prototype.tokenize = function (options) {
   var self = this;
@@ -4578,7 +4578,7 @@ HostedFields.prototype.tokenize = function (options) {
  *     console.error(addClassErr);
  *   }
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 HostedFields.prototype.addClass = function (field, classname) {
   var err;
@@ -4623,7 +4623,7 @@ HostedFields.prototype.addClass = function (field, classname) {
  *   // some time later...
  *   hostedFieldsInstance.removeClass('number', 'custom-class');
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 HostedFields.prototype.removeClass = function (field, classname) {
   var err;
@@ -4684,7 +4684,7 @@ HostedFields.prototype.removeClass = function (field, classname) {
  *   }
  * });
  *
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 HostedFields.prototype.setAttribute = function (options) {
   var attributeErr, err;
@@ -4741,7 +4741,7 @@ HostedFields.prototype.setAttribute = function (options) {
  *   '12 - diciembre'
  * ]);
  *
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 HostedFields.prototype.setMonthOptions = function (options) {
   var self = this;
@@ -4812,7 +4812,7 @@ HostedFields.prototype.setMessage = function (options) {
  *   }
  * });
  *
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 HostedFields.prototype.removeAttribute = function (options) {
   var attributeErr, err;
@@ -4854,7 +4854,7 @@ HostedFields.prototype.removeAttribute = function (options) {
  * @param {string} placeholder Will be used as the `placeholder` attribute of the input.
  * @param {callback} [callback] Callback executed on completion, containing an error if one occurred. No data is returned if the placeholder updated successfully.
  *
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 HostedFields.prototype.setPlaceholder = function (field, placeholder) {
   return this.setAttribute({
@@ -4869,7 +4869,7 @@ HostedFields.prototype.setPlaceholder = function (field, placeholder) {
  * @public
  * @param {string} field The field you wish to clear. Must be a valid {@link module:braintree-web/hosted-fields~fieldOptions fieldOption}.
  * @param {callback} [callback] Callback executed on completion, containing an error if one occurred. No data is returned if the field cleared successfully.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * hostedFieldsInstance.clear('number', function (clearErr) {
  *   if (clearErr) {
@@ -5012,20 +5012,20 @@ var supportsInputFormatting = require('restricted-input/supports-input-formattin
 var wrapPromise = require('@braintree/wrap-promise');
 var BraintreeError = require('../lib/braintree-error');
 var Promise = require('../lib/promise');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 /**
  * Fields used in {@link module:braintree-web/hosted-fields~fieldOptions fields options}
  * @typedef {object} field
  * @property {string} selector Deprecated: Now an alias for `options.container`.
- * @property {string|HTMLElement} container A DOM node or CSS selector to find the container where the hosted field will be inserted.
+ * @property {(string|HTMLElement)} container A DOM node or CSS selector to find the container where the hosted field will be inserted.
  * @property {string} [placeholder] Will be used as the `placeholder` attribute of the input. If `placeholder` is not natively supported by the browser, it will be polyfilled.
  * @property {string} [type] Will be used as the `type` attribute of the input. To mask `cvv` input, for instance, `type: "password"` can be used.
  * @property {boolean} [formatInput=true] Enable or disable automatic formatting on this field.
- * @property {object|boolean} [maskInput=false] Enable or disable input masking when input is not focused. If set to `true` instead of an object, the defaults for the `maskInput` parameters will be used.
+ * @property {(object|boolean)} [maskInput=false] Enable or disable input masking when input is not focused. If set to `true` instead of an object, the defaults for the `maskInput` parameters will be used.
  * @property {string} [maskInput.character=•] The character to use when masking the input. The default character ('•') uses a unicode symbol, so the webpage must support UTF-8 characters when using the default.
  * @property {Boolean} [maskInput.showLastFour=false] Only applicable for the credit card field. Whether or not to show the last 4 digits of the card when masking.
- * @property {object|boolean} [select] If truthy, this field becomes a `<select>` dropdown list. This can only be used for `expirationMonth` and `expirationYear` fields. If you do not use a `placeholder` property for the field, the current month/year will be the default selected value.
+ * @property {(object|boolean)} [select] If truthy, this field becomes a `<select>` dropdown list. This can only be used for `expirationMonth` and `expirationYear` fields. If you do not use a `placeholder` property for the field, the current month/year will be the default selected value.
  * @property {string[]} [select.options] An array of 12 strings, one per month. This can only be used for the `expirationMonth` field. For example, the array can look like `['01 - January', '02 - February', ...]`.
  * @property {number} [maxCardLength] This option applies only to the number field. Allows a limit to the length of the card number, even if the card brand may support numbers of a greater length. If the value passed is greater than the max length for a card brand, the smaller number of the 2 values will be used. For example, is `maxCardLength` is set to 16, but an American Express card is entered (which has a max card length of 15), a max card length of 15 will be used.
  * @property {number} [maxlength] This option applies only to the CVV and postal code fields. Will be used as the `maxlength` attribute of the input if it is less than the default. The primary use cases for the `maxlength` option are: limiting the length of the CVV input for CVV-only verifications when the card type is known and limiting the length of the postal code input when cards are coming from a known region.
@@ -5318,7 +5318,7 @@ module.exports = {
   supportsInputFormatting: supportsInputFormatting,
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.20.3`.
+   * @description The current version of the SDK, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION
@@ -5353,7 +5353,7 @@ module.exports = {
 
 var enumerate = require('../../lib/enumerate');
 var errors = require('./errors');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 var constants = {
   VERSION: VERSION,
@@ -5857,7 +5857,7 @@ module.exports = {
 var BraintreeError = require('./braintree-error');
 var Promise = require('./promise');
 var sharedErrors = require('./errors');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 function basicComponentVerification(options) {
   var client, authorization, name;
@@ -6205,7 +6205,7 @@ module.exports = BraintreeBus;
 },{"../braintree-error":77,"./check-origin":78,"./events":79,"framebus":137}],81:[function(require,module,exports){
 'use strict';
 
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 var PLATFORM = 'web';
 
 var CLIENT_API_URLS = {
@@ -6350,7 +6350,7 @@ var Promise = require('./promise');
 var assets = require('./assets');
 var sharedErrors = require('./errors');
 
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 function createDeferredClient(options) {
   var promise = Promise.resolve();
@@ -6530,7 +6530,7 @@ module.exports = function (array, key, value) {
 },{}],92:[function(require,module,exports){
 'use strict';
 
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 var assign = require('./assign').assign;
 
 function generateTokenizationParameters(configuration, overrides) {
@@ -7002,7 +7002,7 @@ module.exports = {
 var basicComponentVerification = require('../lib/basic-component-verification');
 var wrapPromise = require('@braintree/wrap-promise');
 var PayPalCheckout = require('./paypal-checkout');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 /**
  * @static
@@ -7026,7 +7026,7 @@ var VERSION = "3.54.0";
  * }).catch(function (err) {
  *   console.error('Error!', err);
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 function create(options) {
   var name = 'PayPal Checkout';
@@ -7057,7 +7057,7 @@ module.exports = {
   create: wrapPromise(create),
   isSupported: isSupported,
   /**
-   * @description The current version of the SDK, i.e. `1.20.3`.
+   * @description The current version of the SDK, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION
@@ -7332,7 +7332,7 @@ PayPalCheckout.prototype._initialize = function (options) {
  * * `order` - Validates the transaction without an authorization (i.e. without holding funds). Useful for authorizing and capturing funds up to 90 days after the order has been placed. Only available for Checkout flow.
  * * `capture` - Payment will be immediately submitted for settlement upon creating a transaction. `sale` can be used as an alias for this value.
  * @param {boolean} [options.offerCredit=false] Offers PayPal Credit as the default funding instrument for the transaction. If the customer isn't pre-approved for PayPal Credit, they will be prompted to apply for it.
- * @param {string|number} [options.amount] The amount of the transaction. Required when using the Checkout flow.
+ * @param {(string|number)} [options.amount] The amount of the transaction. Required when using the Checkout flow.
  * @param {string} [options.currency] The currency code of the amount, such as 'USD'. Required when using the Checkout flow.
  * @param {string} [options.displayName] The merchant name displayed inside of the PayPal lightbox; defaults to the company name on your Braintree account
  * @param {string} [options.locale=en_US] Use this option to change the language, links, and terminology used in the PayPal flow. This locale will be used unless the buyer has set a preferred locale for their account. If an unsupported locale is supplied, a fallback locale (determined by buyer preference or browser data) will be used and no error will be thrown.
@@ -7395,7 +7395,7 @@ PayPalCheckout.prototype._initialize = function (options) {
  *   // Add other options, e.g. onApproved, onCancel, onError
  * }).render('#paypal-button');
  *
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 PayPalCheckout.prototype.createPayment = function (options) {
   var self = this;
@@ -7465,7 +7465,7 @@ PayPalCheckout.prototype.createPayment = function (options) {
  * @param {string} [tokenizeOptions.paymentId] Payment ID returned by PayPal `onApproved` callback.
  * @param {string} [tokenizeOptions.billingToken] Billing Token returned by PayPal `onApproved` callback.
  * @param {callback} [callback] The second argument, <code>payload</code>, is a {@link PayPalCheckout~tokenizePayload|tokenizePayload}. If no callback is provided, the promise resolves with a {@link PayPalCheckout~tokenizePayload|tokenizePayload}.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 PayPalCheckout.prototype.tokenizePayment = function (tokenizeOptions) {
   var self = this;
@@ -7638,7 +7638,7 @@ PayPalCheckout.prototype._formatTokenizePayload = function (response) {
  * paypalCheckoutInstance.teardown(function () {
  *   // teardown is complete
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 PayPalCheckout.prototype.teardown = function () {
   convertMethodsToError(this, methods(PayPalCheckout.prototype));
@@ -7670,7 +7670,7 @@ var makePromisePlus = require('../../../lib/promise-plus');
 var EventEmitter = require('@braintree/event-emitter');
 var errors = require('../../shared/errors');
 
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 function BaseFramework(options) {
   EventEmitter.call(this);
@@ -8049,7 +8049,7 @@ var useMin = require('../../../lib/use-min');
 
 var events = require('../../shared/events');
 
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 var IFRAME_HEIGHT = 400;
 var IFRAME_WIDTH = 400;
 
@@ -8228,7 +8228,7 @@ var makePromisePlus = require('../../../lib/promise-plus');
 
 var INTEGRATION_TIMEOUT_MS = require('../../../lib/constants').INTEGRATION_TIMEOUT_MS;
 var PLATFORM = require('../../../lib/constants').PLATFORM;
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 function SongbirdFramework(options) {
   BaseFramework.call(this, options);
@@ -8950,7 +8950,7 @@ var FRAMEWORKS = require('./frameworks');
  */
 
 /**
- * This event is emitted when the `inline-iframe` framework is specified when creating the 3D Secure instance and the authentication iframe becomes available.
+ * This event is emitted when the `2-inline-iframe` version is specified when creating the 3D Secure instance and the authentication iframe becomes available.
  * @event ThreeDSecure#authentication-iframe-available
  * @type {object}
  * @example
@@ -8971,7 +8971,7 @@ var FRAMEWORKS = require('./frameworks');
  * <caption>Listening for when the lookup request is complete</caption>
  * braintree.threeDSecure.create({
  *   client: clientInstance,
- *   framework: 'inline-iframe'
+ *   version: '2-inline-iframe'
  * }, function (createErr, threeDSecureInstance) {
  *   threeDSecureInstance.on('lookup-complete', function (data, next) {
  *     // inspect the data
@@ -9024,7 +9024,7 @@ EventEmitter.createChild(ThreeDSecure);
  * @param {callback} options.removeFrame **Deprecated** For use in 3DS 1.0 Flows. This {@link ThreeDSecure~removeFrameCallback|removeFrameCallback} will be called when the bank frame needs to be removed from your page. Only to be used in 3DS 1.0 integrations.
  * @param {callback} [callback] The second argument, <code>data</code>, is a {@link ThreeDSecure~verifyPayload|verifyPayload}. If no callback is provided, it will return a promise that resolves {@link ThreeDSecure~verifyPayload|verifyPayload}.
 
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * <caption>Verifying a payment method nonce with 3DS 2.0</caption>
  * var my3DSContainer;
@@ -9232,7 +9232,7 @@ ThreeDSecure.prototype.verifyCard = function (options) {
  * Launch the iframe challenge using a 3D Secure lookup response from a server side lookup.
  *
  * @public
- * @param {object|string} lookupResponse The lookup response from the server side call to lookup the 3D Secure information. The raw string or a parsed object can be passed.
+ * @param {(object|string)} lookupResponse The lookup response from the server side call to lookup the 3D Secure information. The raw string or a parsed object can be passed.
  * @returns {Promise} Returns a promise.
  * @example
  * var my3DSContainer;
@@ -9267,7 +9267,7 @@ ThreeDSecure.prototype.initializeChallengeWithLookupResponse = function (lookupR
  * @param {string} [options.bin] The numeric Bank Identification Number (bin) of the card from a tokenization payload. For example, this can be a {@link HostedFields~tokenizePayload|tokenizePayload} returned by Hosted Fields under `payload.details.bin`. Though not required to start the verification, it is required to receive a 3DS 2.0 lookup response.
  * @param {callback} [callback] The second argument, <code>data</code>, is a {@link ThreeDSecure~prepareLookupPayload|prepareLookupPayload}. If no callback is provided, it will return a promise that resolves {@link ThreeDSecure~prepareLookupPayload|prepareLookupPayload}.
 
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * <caption>Preparing data for a 3D Secure lookup</caption>
  * threeDSecure.prepareLookup({
@@ -9292,7 +9292,7 @@ ThreeDSecure.prototype.prepareLookup = function (options) {
  * Cancel the 3DS flow and return the verification payload if available. If using 3D Secure version 2, this will not close the UI of the authentication modal. It is recommended that this method only be used in the {@link ThreeDSecure#event:lookup-complete|`lookup-complete`} event or the `onLookupComplete` callback.
  * @public
  * @param {callback} [callback] The second argument is a {@link ThreeDSecure~verifyPayload|verifyPayload}. If there is no verifyPayload (the initial lookup did not complete), an error will be returned. If no callback is passed, `cancelVerifyCard` will return a promise.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example <caption>Cancel the verification in `lookup-complete` event</caption>
  * // set up listener after instantiation
  * threeDSecure.on('lookup-complete', function (data, next) {
@@ -9383,7 +9383,7 @@ ThreeDSecure.prototype.cancelVerifyCard = function () {
  * threeDSecure.teardown(function () {
  *   // teardown is complete
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 ThreeDSecure.prototype.teardown = function () {
   var methodNames = methods(ThreeDSecure.prototype).concat(methods(EventEmitter.prototype));
@@ -9407,7 +9407,7 @@ var createAssetsUrl = require('../lib/create-assets-url');
 var BraintreeError = require('../lib/braintree-error');
 var analytics = require('../lib/analytics');
 var errors = require('./shared/errors');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 var Promise = require('../lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
 
@@ -9417,15 +9417,15 @@ var wrapPromise = require('@braintree/wrap-promise');
  * @param {object} options Creation options:
  * @param {Client} [options.client] A {@link Client} instance.
  * @param {string} [options.authorization] A tokenizationKey or clientToken. Can be used in place of `options.client`.
- * @param {number|string} [options.version=1] The version of 3D Secure to use. Possible options:
+ * @param {(number|string)} [options.version=1] The version of 3D Secure to use. Possible options:
  * * 1 - The legacy 3D Secure v1.0 integration.
  * * 2 - A 3D Secure v2.0 integration that uses a modal to host the 3D Secure iframe.
  * * 2-bootstrap3-modal - A 3D Secure v2.0 integration that uses a modal styled with Bootstrap 3 styles to host the 3D Secure iframe. Requires having the Bootstrap 3 script files and stylesheets on your page.
  * * 2-inline-iframe - A 3D Secure v2.0 integration that provides the authentication iframe directly to the merchant.
  * @param {callback} [callback] The second argument, `data`, is the {@link ThreeDSecure} instance. If no callback is provided, it returns a promise that resolves the {@link ThreeDSecure} instance.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
 @example
- * <caption>Creating a v2 3D Secure component using cardinal-modal framework</caption>
+ * <caption>Creating a v2 3D Secure component using 2 version (Cardinal modal)</caption>
  * braintree.threeDSecure.create({
  *   client: clientInstance,
  *   version: '2'
@@ -9449,7 +9449,7 @@ var wrapPromise = require('@braintree/wrap-promise');
  *   });
  * });
  * @example
- * <caption>Creating a v2 3D Secure component using bootstrap3-modal framework</caption>
+ * <caption>Creating a v2 3D Secure component using 2-bootstrap3-modal version</caption>
  * // must have the boostrap js, css and jquery files on your page
  * braintree.threeDSecure.create({
  *   client: clientInstance,
@@ -9475,7 +9475,7 @@ var wrapPromise = require('@braintree/wrap-promise');
  *   });
  * });
  * @example
- * <caption>Creating a v2 3D Secure component using inline-iframe framework</caption>
+ * <caption>Creating a v2 3D Secure component using 2-inline-iframe version</caption>
  * braintree.threeDSecure.create({
  *   client: clientInstance,
  *   version: '2-inline-iframe'
@@ -9591,7 +9591,7 @@ function getFramework(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.20.3`.
+   * @description The current version of the SDK, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION
@@ -9828,7 +9828,7 @@ var basicComponentVerification = require('../lib/basic-component-verification');
 var createDeferredClient = require('../lib/create-deferred-client');
 var createAssetsUrl = require('../lib/create-assets-url');
 var VaultManager = require('./vault-manager');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 var wrapPromise = require('@braintree/wrap-promise');
 
 /**
@@ -9865,7 +9865,7 @@ function create(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.20.3`.
+   * @description The current version of the SDK, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION
@@ -9916,7 +9916,7 @@ function VaultManager(options) {
  * @param {object} [options] Options for fetching payment methods.
  * @param {boolean} [options.defaultFirst = false] If `true`, the payment methods will be returned with the default payment method for the customer first. Otherwise, the payment methods will be returned with the most recently used payment method first.
  * @param {callback} [callback] The second argument is a {@link VaultManager~fetchPaymentMethodsPayload|fetchPaymentMehodsPayload}. This is also what is resolved by the promise if no callback is provided.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * vaultManagerInstance.fetchPaymentMethods(function (err, paymentMethods) {
  *   paymentMethods.forEach(function (paymentMethod) {
@@ -9954,7 +9954,7 @@ VaultManager.prototype.fetchPaymentMethods = function (options) {
  * @ignore
  * @param {string} paymentMethodNonce The payment method nonce that references a vaulted payment method.
  * @param {callback} [callback] No data is returned if the operation is successful.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * vaultManagerInstance.deletePaymentMethod('nonce-to-delete', function (err) {
  *   // handle err if it exists
@@ -10045,7 +10045,7 @@ function formatPaymentMethodPayload(paymentMethod) {
  * vaultManagerInstance.teardown(function () {
  *   // teardown is complete
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 VaultManager.prototype.teardown = function () {
   convertMethodsToError(this, methods(VaultManager.prototype));
@@ -10069,7 +10069,7 @@ var BraintreeError = require('../lib/braintree-error');
 var Venmo = require('./venmo');
 var Promise = require('../lib/promise');
 var supportsVenmo = require('./shared/supports-venmo');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 /**
  * @static
@@ -10089,7 +10089,7 @@ var VERSION = "3.54.0";
  * }).catch(function (createErr) {
  *   console.error('Error creating Venmo instance', createErr);
  * });
- * @returns {Promise|void} Returns the Venmo instance.
+ * @returns {(Promise|void)} Returns the Venmo instance.
  */
 function create(options) {
   var name = 'Venmo';
@@ -10157,7 +10157,7 @@ module.exports = {
   create: wrapPromise(create),
   isBrowserSupported: isBrowserSupported,
   /**
-   * @description The current version of the SDK, i.e. `1.20.3`.
+   * @description The current version of the SDK, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION
@@ -10292,7 +10292,7 @@ var convertMethodsToError = require('../lib/convert-methods-to-error');
 var wrapPromise = require('@braintree/wrap-promise');
 var BraintreeError = require('../lib/braintree-error');
 var Promise = require('../lib/promise');
-var VERSION = "3.54.0";
+var VERSION = "3.54.2";
 
 /**
  * Venmo tokenize payload.
@@ -10387,7 +10387,7 @@ Venmo.prototype.hasTokenizationResult = function () {
  * Only one Venmo flow can be active at a time. One way to achieve this is to disable your Venmo button while the flow is open.
  * @public
  * @param {callback} [callback] The second argument, <code>data</code>, is a {@link Venmo~tokenizePayload|tokenizePayload}. If no callback is provided, the method will return a Promise that resolves with a {@link Venmo~tokenizePayload|tokenizePayload}.
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  * @example
  * button.addEventListener('click', function () {
  *   // Disable the button so that we don't attempt to open multiple popups.
@@ -10470,7 +10470,7 @@ Venmo.prototype.tokenize = function () {
  * venmoInstance.teardown(function () {
  *   // teardown is complete
  * });
- * @returns {Promise|void} Returns a promise if no callback is provided.
+ * @returns {(Promise|void)} Returns a promise if no callback is provided.
  */
 Venmo.prototype.teardown = function () {
   this._removeVisibilityEventListener();
@@ -10522,7 +10522,11 @@ function getFragmentParameters() {
 
   return keyValuesArray.reduce(function (toReturn, keyValue) {
     var parts = keyValue.split('=');
-    var key = decodeURIComponent(parts[0]);
+    // some Single Page Apps may pre-pend a / to the first value
+    // in the hash, assuming it's a route in their app
+    // instead of information from Venmo, this removes all
+    // non-alphanumeric characters from the keys in the params
+    var key = decodeURIComponent(parts[0]).replace(/\W/g, '');
     var value = decodeURIComponent(parts[1]);
 
     toReturn[key] = value;
@@ -12482,7 +12486,7 @@ var UPDATABLE_CONFIGURATION_OPTIONS_THAT_REQUIRE_UNVAULTED_PAYMENT_METHODS_TO_BE
   paymentOptionIDs.googlePay
 ];
 var HAS_RAW_PAYMENT_DATA = {};
-var VERSION = '1.20.3';
+var VERSION = '1.20.4';
 
 HAS_RAW_PAYMENT_DATA[constants.paymentMethodTypes.googlePay] = true;
 HAS_RAW_PAYMENT_DATA[constants.paymentMethodTypes.applePay] = true;
@@ -12504,7 +12508,7 @@ HAS_RAW_PAYMENT_DATA[constants.paymentMethodTypes.applePay] = true;
 /**
  * @typedef {object} Dropin~paypalPaymentMethodPayload
  * @property {string} nonce The payment method nonce, used by your server to charge the PayPal account.
- * @property {object} details Additional PayPal account details. See a full list of details in the [PayPal client reference](http://braintree.github.io/braintree-web/3.54.0/PayPalCheckout.html#~tokenizePayload).
+ * @property {object} details Additional PayPal account details. See a full list of details in the [PayPal client reference](http://braintree.github.io/braintree-web/3.54.2/PayPalCheckout.html#~tokenizePayload).
  * @property {string} type The payment method type, always `PayPalAccount` when the method requested is a PayPal account.
  * @property {?string} deviceData If data collector is configured, the device data property to be used when making a transaction.
  */
@@ -13064,14 +13068,14 @@ Dropin.prototype._handleAppSwitch = function () {
  * If a payment method is not available, an error will appear in the UI. When a callback is used, an error will be passed to it. If no callback is used, the returned Promise will be rejected with an error.
  * @public
  * @param {object} [options] All options for requesting a payment method.
- * @param {object} [options.threeDSecure] Any of the options in the [Braintree 3D Secure client reference](https://braintree.github.io/braintree-web/3.54.0/ThreeDSecure.html#verifyCard) except for `nonce`, `bin`, and `onLookupComplete`. If `amount` is provided, it will override the value of `amount` in the [3D Secure create options](module-braintree-web-drop-in.html#~threeDSecureOptions). The more options provided, the more likely the customer will not need to answer a 3DS challenge. The recommended fields for achieving a 3DS v2 verification are:
+ * @param {object} [options.threeDSecure] Any of the options in the [Braintree 3D Secure client reference](https://braintree.github.io/braintree-web/3.54.2/ThreeDSecure.html#verifyCard) except for `nonce`, `bin`, and `onLookupComplete`. If `amount` is provided, it will override the value of `amount` in the [3D Secure create options](module-braintree-web-drop-in.html#~threeDSecureOptions). The more options provided, the more likely the customer will not need to answer a 3DS challenge. The recommended fields for achieving a 3DS v2 verification are:
  * * `email`
  * * `mobilePhoneNumber`
  * * `billingAddress`
  *
  * For an example of verifying 3D Secure within Drop-in, [check out this codepen](https://codepen.io/braintree/pen/KjWqGx).
  * @param {callback} [callback] May be used as the only parameter in requestPaymentMethod if no `options` are provided. The first argument will be an error if no payment method is available and will otherwise be null. The second argument will be an object containing a payment method nonce; either a {@link Dropin~cardPaymentMethodPayload|cardPaymentMethodPayload}, a {@link Dropin~paypalPaymentMethodPayload|paypalPaymentMethodPayload}, a {@link Dropin~venmoPaymentMethodPayload|venmoPaymentMethodPayload}, a {@link Dropin~googlePayPaymentMethodPayload|googlePayPaymentMethodPayload} or an {@link Dropin~applePayPaymentMethodPayload|applePayPaymentMethodPayload}. If no callback is provided, `requestPaymentMethod` will return a promise.
- * @returns {void|Promise} Returns a promise if no callback is provided.
+ * @returns {(void|Promise)} Returns a promise if no callback is provided.
  * @example <caption>Requesting a payment method</caption>
  * var form = document.querySelector('#my-form');
  * var hiddenNonceInput = document.querySelector('#my-nonce-input');
@@ -13193,7 +13197,7 @@ Dropin.prototype._injectStylesheet = function () {
  * Cleanly remove anything set up by {@link module:braintree-web-drop-in|dropin.create}. This may be be useful in a single-page app.
  * @public
  * @param {callback} [callback] Called on completion, containing an error if one occurred. No data is returned if teardown completes successfully. If no callback is provided, `teardown` will return a promise.
- * @returns {void|Promise} Returns a promise if no callback is provided.
+ * @returns {(void|Promise)} Returns a promise if no callback is provided.
  */
 Dropin.prototype.teardown = function () {
   var teardownError;
@@ -13335,7 +13339,7 @@ module.exports = wrapPrototype(Dropin);
  *   </head>
  *   <body>
  *     <form id="payment-form" action="/" method="post">
- *       <script src="https://js.braintreegateway.com/web/dropin/1.20.3/js/dropin.min.js"
+ *       <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"
  *        data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *       ></script>
  *       <input type="submit" value="Purchase"></input>
@@ -13353,7 +13357,7 @@ module.exports = wrapPrototype(Dropin);
  *   </head>
  *   <body>
  *     <form id="payment-form" action="/" method="post">
- *       <script src="https://js.braintreegateway.com/web/dropin/1.20.3/js/dropin.min.js"
+ *       <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"
  *        data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *        data-paypal.flow="checkout"
  *        data-paypal.amount="10.00"
@@ -13368,7 +13372,7 @@ module.exports = wrapPrototype(Dropin);
  * @example
  * <caption>Specifying a locale and payment option priority</caption>
  * <form id="payment-form" action="/" method="post">
- *   <script src="https://js.braintreegateway.com/web/dropin/1.20.3/js/dropin.min.js"
+ *   <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"
  *    data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *    data-locale="de_DE"
  *    data-payment-option-priority='["paypal","card", "paypalCredit"]'
@@ -13383,7 +13387,7 @@ module.exports = wrapPrototype(Dropin);
  * @example
  * <caption>Including an optional cardholder name field in card form</caption>
  * <form id="payment-form" action="/" method="post">
- *   <script src="https://js.braintreegateway.com/web/dropin/1.20.3/js/dropin.min.js"
+ *   <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"
  *    data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *    data-card.cardholder-name.required="false"
  *   ></script>
@@ -13393,7 +13397,7 @@ module.exports = wrapPrototype(Dropin);
  * @example
  * <caption>Including a required cardholder name field in card form</caption>
  * <form id="payment-form" action="/" method="post">
- *   <script src="https://js.braintreegateway.com/web/dropin/1.20.3/js/dropin.min.js"
+ *   <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"
  *    data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *    data-card.cardholder-name.required="true"
  *   ></script>
@@ -13410,15 +13414,15 @@ var DropinError = require('./lib/dropin-error');
 var Promise = require('./lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
 
-var VERSION = '1.20.3';
+var VERSION = '1.20.4';
 
 /**
- * @typedef {object} cardCreateOptions The configuration options for cards. Internally, Drop-in uses [Hosted Fields](http://braintree.github.io/braintree-web/3.54.0/module-braintree-web_hosted-fields.html) to render the card form. The `overrides.fields` and `overrides.styles` allow the Hosted Fields to be customized.
+ * @typedef {object} cardCreateOptions The configuration options for cards. Internally, Drop-in uses [Hosted Fields](http://braintree.github.io/braintree-web/3.54.2/module-braintree-web_hosted-fields.html) to render the card form. The `overrides.fields` and `overrides.styles` allow the Hosted Fields to be customized.
  *
- * @param {boolean|object} [cardholderName] Will enable a cardholder name field above the card number field. If set to an object, you can specify whether or not the field is required. If set to a `true`, it will default the field to being present, but not required.
+ * @param {(boolean|object)} [cardholderName] Will enable a cardholder name field above the card number field. If set to an object, you can specify whether or not the field is required. If set to a `true`, it will default the field to being present, but not required.
  * @param {boolean} [cardholderName.required=false] When true, the cardholder name field will be required to request the payment method nonce.
- * @param {object} [overrides.fields] The Hosted Fields [`fields` options](http://braintree.github.io/braintree-web/3.54.0/module-braintree-web_hosted-fields.html#~fieldOptions). Only `number`, `cvv`, `expirationDate` and `postalCode` can be configured. Each is a [Hosted Fields `field` object](http://braintree.github.io/braintree-web/3.54.0/module-braintree-web_hosted-fields.html#~field). `selector` cannot be modified.
- * @param {object} [overrides.styles] The Hosted Fields [`styles` options](http://braintree.github.io/braintree-web/3.54.0/module-braintree-web_hosted-fields.html#~styleOptions). These can be used to add custom styles to the Hosted Fields iframes. To style the rest of Drop-in, [review the documentation for customizing Drop-in](https://developers.braintreepayments.com/guides/drop-in/customization/javascript/v3#customize-your-ui).
+ * @param {object} [overrides.fields] The Hosted Fields [`fields` options](http://braintree.github.io/braintree-web/3.54.2/module-braintree-web_hosted-fields.html#~fieldOptions). Only `number`, `cvv`, `expirationDate` and `postalCode` can be configured. Each is a [Hosted Fields `field` object](http://braintree.github.io/braintree-web/3.54.2/module-braintree-web_hosted-fields.html#~field). `selector` cannot be modified.
+ * @param {object} [overrides.styles] The Hosted Fields [`styles` options](http://braintree.github.io/braintree-web/3.54.2/module-braintree-web_hosted-fields.html#~styleOptions). These can be used to add custom styles to the Hosted Fields iframes. To style the rest of Drop-in, [review the documentation for customizing Drop-in](https://developers.braintreepayments.com/guides/drop-in/customization/javascript/v3#customize-your-ui).
  * @param {boolean} [clearFieldsAfterTokenization=true] When false, the card form will not clear the card data when the customer returns to the card view after a successful tokenization.
  * @param {object} [vault] Configuration for vaulting credit cards. Only applies when using a [client token with a customer id](https://developers.braintreepayments.com/reference/request/client-token/generate/#customer_id).
  * @param {boolean} [vault.allowVaultCardOverride=false] When true, the card form will include an option to let the customer decide not to vault the credit card they enter.
@@ -13438,10 +13442,10 @@ var VERSION = '1.20.3';
  * @param {string} amount The amount to verify with 3D Secure.
  */
 
-/** @typedef {object} paypalCreateOptions The configuration options for PayPal and PayPalCredit. For a full list of options see the [PayPal Checkout client reference options](http://braintree.github.io/braintree-web/3.54.0/PayPalCheckout.html#createPayment).
+/** @typedef {object} paypalCreateOptions The configuration options for PayPal and PayPalCredit. For a full list of options see the [PayPal Checkout client reference options](http://braintree.github.io/braintree-web/3.54.2/PayPalCheckout.html#createPayment).
  *
  * @param {string} flow Either `checkout` for a one-time [Checkout with PayPal](https://developers.braintreepayments.com/guides/paypal/checkout-with-paypal/javascript/v3) flow or `vault` for a [Vault flow](https://developers.braintreepayments.com/guides/paypal/vault/javascript/v3). Required when using PayPal or PayPal Credit.
- * @param {string|number} [amount] The amount of the transaction. Required when using the Checkout flow.
+ * @param {(string|number)} [amount] The amount of the transaction. Required when using the Checkout flow.
  * @param {string} [currency] The currency code of the amount, such as `USD`. Required when using the Checkout flow.
  * @param {string} [buttonStyle] The style object to apply to the PayPal button. Button customization includes color, shape, size, and label. The options [found here](https://developer.paypal.com/docs/integration/direct/express-checkout/integration-jsv4/customize-button/#button-styles) are available.
  * @param {boolean} [commit] The user action to show on the PayPal review page. If true, a `Pay Now` button will be shown. If false, a `Continue` button will be shown.
@@ -13481,7 +13485,7 @@ var VERSION = '1.20.3';
  * @see {@link https://developers.google.com/pay/api/web/reference/object#ButtonOptions ButtonOptions}
  */
 
-/** @typedef {object|boolean} venmoCreateOptions The configuration options for Venmo. If `true` is passed instead of a configuration object, the default settings listed will be used.
+/** @typedef {(object|boolean)} venmoCreateOptions The configuration options for Venmo. If `true` is passed instead of a configuration object, the default settings listed will be used.
  *
  * @param {boolean} [allowNewBrowserTab=true] If false, it restricts supported browsers to those that can app switch to the Venmo app without opening a new tab.
  */
@@ -13492,7 +13496,7 @@ var VERSION = '1.20.3';
  * @description This function is the entry point for `braintree.dropin`. It is used for creating {@link Dropin} instances.
  * @param {object} options Object containing all {@link Dropin} options:
  * @param {string} options.authorization A [tokenization key](https://developers.braintreepayments.com/guides/authorization/tokenization-key/javascript/v3) or a [client token](https://developers.braintreepayments.com/guides/authorization/client-token). If authorization is a client token created with a [customer ID](https://developers.braintreepayments.com/guides/drop-in/javascript/v3#customer-id), Drop-in will render saved payment methods and automatically store any newly-added payment methods in their Vault record.
- * @param {string|HTMLElement} options.container A reference to an empty element, such as a `<div>`, where Drop-in will be included on your page or the selector for the empty element. e.g. `#dropin-container`.
+ * @param {(string|HTMLElement)} options.container A reference to an empty element, such as a `<div>`, where Drop-in will be included on your page or the selector for the empty element. e.g. `#dropin-container`.
  * @param {string} options.selector Deprecated: Now an alias for `options.container`.
  * @param {string} [options.locale=`en_US`] Use this option to change the language, links, and terminology used throughout Drop-in. Supported locales include:
  * `da_DK`,
@@ -13522,20 +13526,20 @@ var VERSION = '1.20.3';
  * @param {object} [options.translations] To use your own translations, pass an object with the strings you wish to replace. This object must use the same structure as the object used internally for supported translations, which can be found [here](https://github.com/braintree/braintree-web-drop-in/blob/master/src/translations/en_US.js). Any strings that are not included will be those from the provided `locale` or `en_US` if no `locale` is provided. See below for an example of creating Drop-in with custom translations.
  * @param {array} [options.paymentOptionPriority] Use this option to indicate the order in which enabled payment options should appear when multiple payment options are enabled. By default, payment options will appear in this order: `['card', 'paypal', 'paypalCredit', 'venmo', 'applePay']`. Payment options omitted from this array will not be offered to the customer.
  *
- * @param {boolean|object} [options.card] The configuration options for cards. See [`cardCreateOptions`](#~cardCreateOptions) for all `card` options. If this option is omitted, cards will still appear as a payment option. To remove cards, pass `false` for the value.
+ * @param {(boolean|object)} [options.card] The configuration options for cards. See [`cardCreateOptions`](#~cardCreateOptions) for all `card` options. If this option is omitted, cards will still appear as a payment option. To remove cards, pass `false` for the value.
  * @param {object} [options.paypal] The configuration options for PayPal. To include a PayPal option in your Drop-in integration, include the `paypal` parameter and [enable PayPal in the Braintree Control Panel](https://developers.braintreepayments.com/guides/paypal/testing-go-live/#go-live). To test in Sandbox, you will need to [link a PayPal sandbox test account to your Braintree sandbox account](https://developers.braintreepayments.com/guides/paypal/testing-go-live/#linked-paypal-testing).
  *
- * Some of the PayPal configuration options are listed [here](#~paypalCreateOptions), but for a full list see the [PayPal Checkout client reference options](http://braintree.github.io/braintree-web/3.54.0/PayPalCheckout.html#createPayment).
+ * Some of the PayPal configuration options are listed [here](#~paypalCreateOptions), but for a full list see the [PayPal Checkout client reference options](http://braintree.github.io/braintree-web/3.54.2/PayPalCheckout.html#createPayment).
  *
  * PayPal is not [supported in Internet Explorer versions lower than 11](https://developer.paypal.com/docs/checkout/reference/faq/#which-browsers-does-paypal-checkout-support).
  *
  * @param {object} [options.paypalCredit] The configuration options for PayPal Credit. To include a PayPal Credit option in your Drop-in integration, include the `paypalCredit` parameter and [enable PayPal in the Braintree Control Panel](https://developers.braintreepayments.com/guides/paypal/testing-go-live/#go-live).
  *
- * Some of the PayPal Credit configuration options are listed [here](#~paypalCreateOptions), but for a full list see the [PayPal Checkout client reference options](http://braintree.github.io/braintree-web/3.54.0/PayPalCheckout.html#createPayment). For more information on PayPal Credit, see the [Braintree Developer Docs](https://developers.braintreepayments.com/guides/paypal/paypal-credit/javascript/v3).
+ * Some of the PayPal Credit configuration options are listed [here](#~paypalCreateOptions), but for a full list see the [PayPal Checkout client reference options](http://braintree.github.io/braintree-web/3.54.2/PayPalCheckout.html#createPayment). For more information on PayPal Credit, see the [Braintree Developer Docs](https://developers.braintreepayments.com/guides/paypal/paypal-credit/javascript/v3).
  *
  * PayPal Credit is not [supported in Internet Explorer versions lower than 11](https://developer.paypal.com/docs/checkout/reference/faq/#which-browsers-does-paypal-checkout-support).
  *
- * @param {object|boolean} [options.venmo] The configuration options for Pay with Venmo. To include a Venmo option in your Drop-in integration, include the `venmo` parameter and [follow the documentation for setting up Venmo in the Braintree control panel](https://articles.braintreepayments.com/guides/payment-methods/venmo#setup). If a user's browser does not support Venmo, the Venmo option will not be rendered.
+ * @param {(object|boolean)} [options.venmo] The configuration options for Pay with Venmo. To include a Venmo option in your Drop-in integration, include the `venmo` parameter and [follow the documentation for setting up Venmo in the Braintree control panel](https://articles.braintreepayments.com/guides/payment-methods/venmo#setup). If a user's browser does not support Venmo, the Venmo option will not be rendered.
  *
  * See [`venmoCreateOptions`](#~venmoCreateOptions) for `venmo` options.
  *
@@ -13549,14 +13553,14 @@ var VERSION = '1.20.3';
  *
  * @param {object} [options.dataCollector] The configuration options for data collector. See [`dataCollectorOptions`](#~dataCollectorOptions) for all `dataCollector` options. If Data Collector is configured and fails to load, Drop-in creation will fail.
  *
- * @param {boolean|object} [options.threeDSecure] It's recomended that you pass `true` here to enable 3D Secure and pass the configuration options for 3D Secure into {@link Dropin#requestPaymentMethod|requestPaymentMethod options}.See [`threeDSecureOptions`](#~threeDSecureOptions) for the deprecated create options. If 3D Secure is configured and fails to load, Drop-in creation will fail.
+ * @param {(boolean|object)} [options.threeDSecure] It's recomended that you pass `true` here to enable 3D Secure and pass the configuration options for 3D Secure into {@link Dropin#requestPaymentMethod|requestPaymentMethod options}.See [`threeDSecureOptions`](#~threeDSecureOptions) for the deprecated create options. If 3D Secure is configured and fails to load, Drop-in creation will fail.
  *
  * @param {boolean} [options.vaultManager=false] Whether or not to allow a customer to delete saved payment methods when used with a [client token with a customer id](https://developers.braintreepayments.com/reference/request/client-token/generate/#customer_id). *Note:* Deleting a payment method from Drop-in will permanently delete the payment method, so this option is not recommended for merchants using Braintree's recurring billing system. This feature is not supported in Internet Explorer 9.
  *
  * @param {boolean} [options.preselectVaultedPaymentMethod=true] Whether or not to initialize Drop-in with a vaulted payment method pre-selected. Only applicable when using a [client token with a customer id](https://developers.braintreepayments.com/reference/request/client-token/generate/#customer_id) and a customer with saved payment methods.
  *
  * @param {function} [callback] The second argument, `data`, is the {@link Dropin} instance. Returns a promise if no callback is provided.
- * @returns {void|Promise} Returns a promise if no callback is provided.
+ * @returns {(void|Promise)} Returns a promise if no callback is provided.
  * @example
  * <caption>A full example of accepting credit cards with callback API</caption>
  * <!DOCTYPE html>
@@ -13569,7 +13573,7 @@ var VERSION = '1.20.3';
  *     <div id="dropin-container"></div>
  *     <button id="submit-button">Purchase</button>
  *
- *     <script src="https://js.braintreegateway.com/web/dropin/1.20.3/js/dropin.min.js"></script>
+ *     <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"></script>
  *
  *     <script>
  *       var submitButton = document.querySelector('#submit-button');
@@ -13608,7 +13612,7 @@ var VERSION = '1.20.3';
  *     <div id="dropin-container"></div>
  *     <button id="submit-button">Purchase</button>
  *
- *     <script src="https://js.braintreegateway.com/web/dropin/1.20.3/js/dropin.min.js"></script>
+ *     <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"></script>
  *
  *     <script>
  *       var submitButton = document.querySelector('#submit-button');
@@ -13686,7 +13690,7 @@ var VERSION = '1.20.3';
  *       <input type="hidden" id="nonce" name="payment_method_nonce"></input>
  *     </form>
  *
- *     <script src="https://js.braintreegateway.com/web/dropin/1.20.3/js/dropin.min.js"></script>
+ *     <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"></script>
  *
  *     <script>
  *       var form = document.querySelector('#payment-form');
@@ -13904,7 +13908,7 @@ createFromScriptTag(create, typeof document !== 'undefined' && document.querySel
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of Drop-in, i.e. `1.20.3`.
+   * @description The current version of Drop-in, i.e. `1.20.4`.
    * @type {string}
    */
   VERSION: VERSION

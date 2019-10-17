@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.20.4
+------
+- Update braintree-web to v3.54.2
+  - Fix issue with Venmo tokenization failing because of Single Page App routers
+
 1.20.3
 ------
 - Update braintree-web to v3.54.0
