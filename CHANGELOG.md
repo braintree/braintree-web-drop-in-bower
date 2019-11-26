@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+1.21.0
+------
+- Update braintree-web to v3.55.0
+  - Retry failed connections to Braintree Gateway due to TCP Preconnect errors in all browsers
+  - Google Pay: Add support for `isNetworkTokenized` param in `parseResponse` method
+  - Card Form: Fix issue where pasting a card number over an Amex number could cut off the last digit
+  - PayPal: Add support for shipping options (see https://braintree.github.io/braintree-web/current/PayPalCheckout.html#createPayment)
+- Prevent non-PayPal funding sources from appearing in the PayPal views
+
 1.20.4
 ------
 - Update braintree-web to v3.54.2
