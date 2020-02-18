@@ -1,6 +1,6 @@
 # Braintree Web Drop-in
 
-[![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=eXpPWDNzYkdKZkxuQ1VaYkRqOTYwT1hBZ1ZWcFNoWGE1Mm1UYk02cGNYRT0tLTc5RXJRNFhQdnBlOXFlQlYwdjY4SFE9PQ==--e62ce6f205d984a440dca2c74289c82a30ad84a8)](https://automate.browserstack.com/public-build/eXpPWDNzYkdKZkxuQ1VaYkRqOTYwT1hBZ1ZWcFNoWGE1Mm1UYk02cGNYRT0tLTc5RXJRNFhQdnBlOXFlQlYwdjY4SFE9PQ==--e62ce6f205d984a440dca2c74289c82a30ad84a8)
+[![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=MHNCQnJqZ042SFFUek9uZTFyV2dQZEppenhsdUVBQU9SMzBLRGxPUXZyaz0tLVNpUjlqUnlPUVVPOWswN1B1WWdySXc9PQ==--7517ca3a283b3a7e80dcf5de3f4270bc47eab891)](https://automate.browserstack.com/public-build/MHNCQnJqZ042SFFUek9uZTFyV2dQZEppenhsdUVBQU9SMzBLRGxPUXZyaz0tLVNpUjlqUnlPUVVPOWswN1B1WWdySXc9PQ==--7517ca3a283b3a7e80dcf5de3f4270bc47eab891)
 
 A pre-made payments UI for accepting cards and alternative payments in the browser built using version 3 of the [Braintree JS client SDK](https://github.com/braintree/braintree-web).
 
@@ -32,7 +32,7 @@ This is a full example of a Drop-in integration that only accepts credit cards.
     <div id="dropin-container"></div>
     <button id="submit-button">Purchase</button>
 
-    <script src="https://js.braintreegateway.com/web/dropin/1.22.0/js/dropin.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/dropin/1.22.1/js/dropin.min.js"></script>
 
     <script>
       var submitButton = document.querySelector('#submit-button');
