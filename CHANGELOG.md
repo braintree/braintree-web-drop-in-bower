@@ -1,6 +1,34 @@
 CHANGELOG
 =========
 
+1.25.0
+------
+- Pass through all underlying hosted fields events
+- Update braintree-web to v3.68.0
+  * Provide `CLIENT_AUTHORIZATION_INVALID` error when client token has expired or a tokenization key has been deactivated or deleted
+  * Apple Pay
+    - Support Maestro cards
+  * Card
+    - Fix issue where incorrect keyboard would be used for mobile devices that do not support input formatting
+    - Fix issue where autocomplete cannot run multiple times
+    - Add autofill handling for every hosted field
+  * Venmo
+    - Add allowWebviews configuration to isBrowserSupported
+- Add new locales:
+  * `ar_EG`
+  * `cs_CZ`
+  * `el_GR`
+  * `en_IN`
+  * `es_XC`
+  * `fi_FI`
+  * `fr_XC`
+  * `he_IL`
+  * `hu_HU`
+  * `sk_SK`
+  * `zh_XC`
+- Provide validation to prevent cardholder name fields from being submitted as card numbers
+- Fix issue where hosted fields would not auto focus on card view selection
+
 1.24.0
 ------
 
