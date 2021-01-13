@@ -1,6 +1,23 @@
 CHANGELOG
 =========
 
+1.26.0
+------
+- Update braintree-web to v3.71.0
+- Update promise-polyfill to v8.2.0
+- Fix issue where payment method text may be clipped
+- Add ability to let the Braintree API decide which payment method to show first (typically, the last payment method added to the customer) instead of showing the payment method designated as the customer's default in the Braintree control panel
+  ```js
+  braintree.dropin.create({
+    // other config options
+    showDefaultPaymentMethodFirst: false
+  });
+  ```
+- Apple Pay
+  - Fix issue where Apple Pay view was using `canMakePaymentsWithActiveCard` incorrectly
+- PayPal
+  - Fix issue where PayPal buttons would not render correctly when multiple Drop-in instances were loaded (closes #590)
+
 1.25.0
 ------
 - Pass through all underlying hosted fields events
