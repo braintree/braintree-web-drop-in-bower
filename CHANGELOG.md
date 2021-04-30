@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+1.28.0
+------
+- Update braintree-web to v3.76.3
+- Update browser-detection to v1.11.1
+- Fix issue where card view would not render in a shadow DOM within a shadow DOM
+- Fix issue where Venmo would setup in Firefox for iOS with `allowNewBrowserTab: false` set
+- Improve keyboard navigation
+- Fix issue where scrollbar appears for saved payment methods (#724)
+- Fix bug in initialization process where loading spinner would never resolve (#716)
+- Add `changeActiveView` event to track when the Drop-in updates the active view presented to the customer
+- Add option to not vault PayPal accounts with `paypal.vault.vaultPayPal = false` or `paypalCredit.vault.vaultPayPal = false`
+
 1.27.0
 ------
 - Update braintree-web to v3.74.0
