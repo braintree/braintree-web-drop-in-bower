@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+1.30.1
+------
+- Update braintree-web to v3.78.2
+  - Fix where card form could navigate with tab button in Desktop Safari
+  - Fix where card form could navigate with arrow buttons in iOS Safari (#662)
+- Fix issue where Apple Pay button would not disable when session begins
+
 1.30.0
 ------
 - Update braintree-web to v3.78.0
