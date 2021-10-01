@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.32.0
+----------
+- Update @braintree/browser-detection to v1.12.1
+- Update braintree-web to v3.82.0
+
 1.31.2
 ------
 - Fix issue where a methods container for a cusotmer with 15+ payment methods would obscure the "Choose Another Way to Pay" button
