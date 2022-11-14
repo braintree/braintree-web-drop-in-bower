@@ -1309,7 +1309,7 @@ function create(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.33.6`.
+   * @description The current version of the SDK, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION,
@@ -2109,7 +2109,7 @@ function create(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.33.6`.
+   * @description The current version of the SDK, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION,
@@ -4006,7 +4006,7 @@ function create(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.33.6`.
+   * @description The current version of the SDK, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION,
@@ -6168,7 +6168,7 @@ module.exports = {
   supportsInputFormatting: supportsInputFormatting,
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.33.6`.
+   * @description The current version of the SDK, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION,
@@ -8573,7 +8573,7 @@ module.exports = {
   create: wrapPromise(create),
   isSupported: isSupported,
   /**
-   * @description The current version of the SDK, i.e. `1.33.6`.
+   * @description The current version of the SDK, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION,
@@ -12679,7 +12679,7 @@ function getFramework(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.33.6`.
+   * @description The current version of the SDK, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION,
@@ -12960,7 +12960,7 @@ function create(options) {
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of the SDK, i.e. `1.33.6`.
+   * @description The current version of the SDK, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION,
@@ -13791,7 +13791,7 @@ module.exports = {
   create: wrapPromise(create),
   isBrowserSupported: isBrowserSupported,
   /**
-   * @description The current version of the SDK, i.e. `1.33.6`.
+   * @description The current version of the SDK, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION,
@@ -17917,7 +17917,7 @@ var UPDATABLE_CONFIGURATION_OPTIONS_THAT_REQUIRE_UNVAULTED_PAYMENT_METHODS_TO_BE
   paymentOptionIDs.googlePay
 ];
 var HAS_RAW_PAYMENT_DATA = {};
-var VERSION = '1.33.6';
+var VERSION = '1.33.7';
 
 HAS_RAW_PAYMENT_DATA[constants.paymentMethodTypes.googlePay] = true;
 HAS_RAW_PAYMENT_DATA[constants.paymentMethodTypes.applePay] = true;
@@ -18969,7 +18969,7 @@ module.exports = wrapPrototype(Dropin);
  *   </head>
  *   <body>
  *     <form id="payment-form" action="/" method="post">
- *       <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"
+ *       <script src="https://js.braintreegateway.com/web/dropin/1.33.7/js/dropin.min.js"
  *        data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *       ></script>
  *       <input type="submit" value="Purchase"></input>
@@ -18987,7 +18987,7 @@ module.exports = wrapPrototype(Dropin);
  *   </head>
  *   <body>
  *     <form id="payment-form" action="/" method="post">
- *       <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"
+ *       <script src="https://js.braintreegateway.com/web/dropin/1.33.7/js/dropin.min.js"
  *        data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *        data-paypal.flow="checkout"
  *        data-paypal.amount="10.00"
@@ -19002,7 +19002,7 @@ module.exports = wrapPrototype(Dropin);
  * @example
  * <caption>Specifying a locale and payment option priority</caption>
  * <form id="payment-form" action="/" method="post">
- *   <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"
+ *   <script src="https://js.braintreegateway.com/web/dropin/1.33.7/js/dropin.min.js"
  *    data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *    data-locale="de_DE"
  *    data-payment-option-priority='["paypal","card", "paypalCredit"]'
@@ -19017,7 +19017,7 @@ module.exports = wrapPrototype(Dropin);
  * @example
  * <caption>Including an optional cardholder name field in card form</caption>
  * <form id="payment-form" action="/" method="post">
- *   <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"
+ *   <script src="https://js.braintreegateway.com/web/dropin/1.33.7/js/dropin.min.js"
  *    data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *    data-card.cardholder-name.required="false"
  *   ></script>
@@ -19027,7 +19027,7 @@ module.exports = wrapPrototype(Dropin);
  * @example
  * <caption>Including a required cardholder name field in card form</caption>
  * <form id="payment-form" action="/" method="post">
- *   <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"
+ *   <script src="https://js.braintreegateway.com/web/dropin/1.33.7/js/dropin.min.js"
  *    data-braintree-dropin-authorization="CLIENT_AUTHORIZATION"
  *    data-card.cardholder-name.required="true"
  *   ></script>
@@ -19044,7 +19044,7 @@ var DropinError = require('./lib/dropin-error');
 var Promise = require('./lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
 
-var VERSION = '1.33.6';
+var VERSION = '1.33.7';
 
 /**
  * @typedef {object} cardCreateOptions The configuration options for cards. Internally, Drop-in uses [Hosted Fields](http://braintree.github.io/braintree-web/3.88.3/module-braintree-web_hosted-fields.html) to render the card form. The `overrides.fields` and `overrides.styles` allow the Hosted Fields to be customized.
@@ -19218,7 +19218,7 @@ var VERSION = '1.33.6';
  *     <div id="dropin-container"></div>
  *     <button id="submit-button">Purchase</button>
  *
- *     <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"></script>
+ *     <script src="https://js.braintreegateway.com/web/dropin/1.33.7/js/dropin.min.js"></script>
  *
  *     <script>
  *       var submitButton = document.querySelector('#submit-button');
@@ -19257,7 +19257,7 @@ var VERSION = '1.33.6';
  *     <div id="dropin-container"></div>
  *     <button id="submit-button">Purchase</button>
  *
- *     <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"></script>
+ *     <script src="https://js.braintreegateway.com/web/dropin/1.33.7/js/dropin.min.js"></script>
  *
  *     <script>
  *       var submitButton = document.querySelector('#submit-button');
@@ -19337,7 +19337,7 @@ var VERSION = '1.33.6';
  *       <input type="hidden" id="nonce" name="payment_method_nonce"></input>
  *     </form>
  *
- *     <script src="https://js.braintreegateway.com/web/dropin/1.33.6/js/dropin.min.js"></script>
+ *     <script src="https://js.braintreegateway.com/web/dropin/1.33.7/js/dropin.min.js"></script>
  *
  *     <script>
  *       var form = document.querySelector('#payment-form');
@@ -19555,7 +19555,7 @@ createFromScriptTag(create, typeof document !== 'undefined' && document.querySel
 module.exports = {
   create: wrapPromise(create),
   /**
-   * @description The current version of Drop-in, i.e. `1.33.6`.
+   * @description The current version of Drop-in, i.e. `1.33.7`.
    * @type {string}
    */
   VERSION: VERSION
@@ -24556,11 +24556,15 @@ CardView.prototype._onBlurEvent = function (event) {
 
   classList.remove(fieldGroup, 'braintree-form__field-group--is-focused');
 
+  if (field.isPotentiallyValid) {
+    this.hideFieldError(event.emittedBy);
+  }
+
   if (this._shouldApplyFieldEmptyError(event.emittedBy, field)) {
     this.showFieldError(event.emittedBy, this.strings['fieldEmptyFor' + capitalize(event.emittedBy)]);
   } else if (!field.isEmpty && !field.isValid) {
     this.showFieldError(event.emittedBy, this.strings['fieldInvalidFor' + capitalize(event.emittedBy)]);
-  } else if (event.emittedBy === 'number' && !this._isCardTypeSupported(event.cards[0].type)) {
+  } else if (event.emittedBy === 'number' && !this._isCardTypeSupported(event.cards[0])) {
     this.showFieldError('number', this.strings.unsupportedCardTypeError);
   }
 
@@ -24596,6 +24600,13 @@ CardView.prototype._onCardTypeChangeEvent = function (event) {
     classList.add(numberFieldGroup, 'braintree-form__field-group--card-type-known');
   } else {
     classList.remove(numberFieldGroup, 'braintree-form__field-group--card-type-known');
+  }
+
+  // if the number field emitted the card change event fires
+  // and the card type is supported, we need to clear out the errors
+  // field in case that there was a "card type is unsupported" error
+  if (event.emittedBy === 'number' && this._isCardTypeSupported(event.cards[0])) {
+    this.hideFieldError(event.emittedBy);
   }
 
   this.cardNumberIconSvg.setAttribute('xlink:href', cardNumberHrefLink);
@@ -24635,7 +24646,7 @@ CardView.prototype._onValidityChangeEvent = function (event) {
   var field = event.fields[event.emittedBy];
 
   if (event.emittedBy === 'number' && event.cards[0]) {
-    isValid = field.isValid && this._isCardTypeSupported(event.cards[0].type);
+    isValid = field.isValid && this._isCardTypeSupported(event.cards[0]);
   } else {
     isValid = field.isValid;
   }
@@ -24687,7 +24698,8 @@ CardView.prototype._hideUnsupportedCardIcons = function () {
   }.bind(this));
 };
 
-CardView.prototype._isCardTypeSupported = function (cardType) {
+CardView.prototype._isCardTypeSupported = function (card) {
+  var cardType = card && card.type;
   var configurationCardType = constants.configurationCardTypes[cardType];
   var supportedCardTypes = this.client.getConfiguration().gatewayConfiguration.creditCards.supportedCardTypes;
 
