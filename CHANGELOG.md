@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.35.0
+
+  - Add `hiddenVaultedPaymentMethodTypes` option to `dropin.create`
+  - Update braintree-web to v3.91.0
+
 ## 1.34.0
 
   - Update braintree-web to v3.90.0
