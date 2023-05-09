@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.37.0
+  - Drop dependency on `promise-polyfill`
+  - Drop dependency on @braintree/class-list
+  - Update braintree-web to 3.94.0
+
 ## 1.36.1
   - Update braintree-web to 3.92.1
 
